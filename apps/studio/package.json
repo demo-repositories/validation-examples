@@ -1,0 +1,17 @@
+{
+  "name": "@validation-examples/studio",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "sanity build",
+    "dev": "sanity dev",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@validation-examples/content-schema": "workspace:*",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "sanity": "^6.20.0",
+    "styled-components": "^6.1.19"
+  }
+}

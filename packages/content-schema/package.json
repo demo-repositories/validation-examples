@@ -1,0 +1,26 @@
+{
+  "name": "@validation-examples/content-schema",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@sanity/schema": "^6.20.0",
+    "@sanity/types": "^6.20.0",
+    "@sanity/validation": "^6.20.0",
+    "sanity": "^6.20.0"
+  }
+}

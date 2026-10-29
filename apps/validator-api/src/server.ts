@@ -1,0 +1,23 @@
+import {createClient} from '@sanity/client'
+import {createValidationApp} from './app.js'
+
+const projectId = process.env.SANITY_PROJECT_ID
+const dataset = process.env.SANITY_DATASET
+const token = process.env.SANITY_API_READ_TOKEN
+
+if (!projectId || !dataset || !token) {
+  throw new Error('Set SANITY_PROJECT_ID, SANITY_DATASET, and SANITY_API_READ_TOKEN')
+}
+
+const client = createClient({
+  projectId,
+  dataset,
+  token,
+  apiVersion: '2026-09-03',
+  useCdn: false,
+})
+
+const port = Number(process.env.PORT ?? 3001)
+createValidationApp(client).listen(port, () => {
+  console.log(`Validation API listening on http://localhost:${port}`)
+})
