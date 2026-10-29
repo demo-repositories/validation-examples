@@ -22,8 +22,7 @@ pnpm --filter @validation-examples/studio exec sanity documents validate --datas
 ```sh
 pnpm install
 cp .env.example .env
-# The example project is kan3dut8, organization ofXDcF8Tu, dataset validation.
-# Add a read token before starting the API, then:
+# Fill in the project and organization IDs, then add a read token before starting the API:
 pnpm --filter @validation-examples/studio dev
 pnpm --filter @validation-examples/validator-app dev
 pnpm --filter @validation-examples/validator-api dev

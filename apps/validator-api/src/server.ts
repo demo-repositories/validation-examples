@@ -1,5 +1,9 @@
+import {loadEnvFile} from 'node:process'
+import {fileURLToPath} from 'node:url'
 import {createClient} from '@sanity/client'
 import {createValidationApp} from './app.js'
+
+loadEnvFile(fileURLToPath(new URL('../../../.env', import.meta.url)))
 
 const projectId = process.env.SANITY_PROJECT_ID
 const dataset = process.env.SANITY_DATASET

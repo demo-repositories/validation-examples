@@ -22,12 +22,14 @@ const sample = {
   ],
 }
 
-const config: SanityConfig[] = [
-  {
-    projectId: process.env.SANITY_APP_PROJECT_ID ?? 'kan3dut8',
-    dataset: process.env.SANITY_APP_DATASET ?? 'validation',
-  },
-]
+const projectId = process.env.SANITY_APP_PROJECT_ID
+const dataset = process.env.SANITY_APP_DATASET
+
+if (!projectId || !dataset) {
+  throw new Error('Set SANITY_APP_PROJECT_ID and SANITY_APP_DATASET in the root .env file')
+}
+
+const config: SanityConfig[] = [{projectId, dataset}]
 
 export default function App() {
   return (
