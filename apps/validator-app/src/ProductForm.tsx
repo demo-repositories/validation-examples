@@ -44,7 +44,9 @@ type ValidationState = {
 
 export function ProductForm({client, schema}: {client: ValidationClient; schema: ValidationSchema}) {
   const [validation, setValidation] = useState<ValidationState | null>(null)
-  // React Hook Form calls this resolver on change. Sanity remains the only rule source.
+  // React Hook Form calls this on change. The compiled schema is the only rule source.
+  // Error markers become field errors. Warning markers are shown beside the field.
+  // `notEvaluated` means a client-dependent rule did not run, so the values are rejected.
   const resolver = useMemo<Resolver<ProductFormValues>>(
     () => async (values): Promise<ResolverResult<ProductFormValues>> => {
       try {
@@ -74,6 +76,7 @@ export function ProductForm({client, schema}: {client: ValidationClient; schema:
   const status = useWatch({control, name: 'status'})
 
   useEffect(() => {
+    // Validate on mount so markers appear before the author presses Save.
     void trigger()
   }, [trigger])
 
@@ -82,6 +85,7 @@ export function ProductForm({client, schema}: {client: ValidationClient; schema:
   }
 
   const hasError = validation?.result.markers.some((marker) => marker.level === 'error') ?? false
+  // Save stays available once validation finished and no error markers remain.
   const accepted = validation != null && validation.result.status !== 'notEvaluated' && !hasError
   const warnings = validation?.result.markers.filter((marker) => marker.level === 'warning') ?? []
   const warning = (name: string) => warningFor(warnings, validation?.document, name)
@@ -157,6 +161,7 @@ export function ProductForm({client, schema}: {client: ValidationClient; schema:
             </div>
             <div className="split">
               <Field label="SKU" error={message(formState.errors.variants?.[index]?.sku)}>
+                {/* Keep `_key` so variant marker paths can be turned into field indexes. */}
                 <input type="hidden" {...register(`variants.${index}._key`)} />
                 <input {...register(`variants.${index}.sku`)} />
               </Field>
@@ -224,6 +229,7 @@ function toProductDocument(values: ProductFormValues): SanityDocument {
 }
 
 function finiteNumber(value: number) {
+  // An empty number input is NaN. Leave it unset so required and min rules see a missing value.
   return Number.isFinite(value) ? value : undefined
 }
 
@@ -238,9 +244,11 @@ function formFieldName(path: Path, document: SanityDocument) {
 function markersToFieldErrors(result: DocumentValidationResult, document: SanityDocument) {
   const errors: Record<string, unknown> = {}
   for (const marker of result.markers) {
+    // Warnings stay out of the form errors and are rendered beside the field.
     if (marker.level !== 'error') continue
     assignFieldError(errors, formFieldName(marker.path, document) ?? 'root', marker.message)
   }
+  // An incomplete run has no reliable markers, so block the whole form.
   if (result.status === 'notEvaluated') {
     assignFieldError(errors, 'root', 'Validation incomplete — do not save this document')
   }
@@ -265,6 +273,7 @@ function message(error: {message?: string} | undefined) {
   return error?.message
 }
 
+/** Find the warning whose schema path matches this input. */
 function warningFor(
   warnings: DocumentValidationResult['markers'],
   document: SanityDocument | undefined,

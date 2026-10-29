@@ -3,3 +3,12 @@ packages:
   - packages/*
 allowBuilds:
   esbuild: true
+minimumReleaseAgeExclude:
+  - '@sanity/access-ui@6.21.0-next.103'
+  - '@sanity/diff@6.21.0-next.103'
+  - '@sanity/mutator@6.21.0-next.103'
+  - '@sanity/schema@6.21.0-next.103'
+  - '@sanity/types@6.21.0-next.103'
+  - '@sanity/util@6.21.0-next.103'
+  - '@sanity/validation@6.21.0-next.103'
+  - sanity@6.21.0-next.103

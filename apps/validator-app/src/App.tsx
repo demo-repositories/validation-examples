@@ -5,6 +5,9 @@ import {getValidationSchema} from '@validation-examples/content-schema'
 import {ProductForm} from './ProductForm.js'
 import './app.css'
 
+// Values chosen to trip the shared product rules: a short title, a SKU that already
+// exists, a sale price above price, an active product with no SEO description, an
+// SEO title long enough to warn, and a repeated variant SKU with negative inventory.
 const sample = {
   _id: 'drafts.example-product',
   _type: 'product',
@@ -40,7 +43,9 @@ export default function App() {
 }
 
 function ValidationDemo() {
+  // Custom validators receive this client from context.getClient().
   const client = useClient({apiVersion: '2026-09-03'})
+  // Compiled schema, so rule.custom() functions are still executable.
   const schema = useMemo(getValidationSchema, [])
   const [view, setView] = useState<'json' | 'form'>('json')
 
@@ -69,10 +74,15 @@ function JsonValidation({client, schema}: {client: ValidationClient; schema: Val
   async function validate() {
     try {
       const document = JSON.parse(documentText)
+      // The client lets reference checks and getClient() validators run.
+      // Without it those rules are skipped and status is `notEvaluated`.
       setResult(await validateDocument({document, schema, client}))
     } catch (error) {
+      // A thrown parse or validator error is not a marker. Report it in the same shape,
+      // with `complete: false`, so the UI does not treat the run as a pass.
       setResult({
         status: 'failed',
+        complete: false,
         markers: [{
           code: 'validation.exception',
           level: 'error',

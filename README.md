@@ -7,7 +7,7 @@ Examples for running the same Sanity schema validations in a Studio, an App SDK 
 - `packages/content-schema` is the executable source of truth. It defines the schema and compiles it for `@sanity/validation`.
 - `apps/studio` displays those rules in a standalone Studio.
 - `apps/validator-app` is a Sanity App SDK app with two views: a JSON document and a React Hook Form. Both validate with the signed-in client.
-- `apps/validator-api` exposes `POST /validate` and `POST /validate/batch` for server-side validation.
+- `apps/validator-api` exposes `POST /validate` and `POST /validate/batch`. The batch route calls `validateDocuments`, which shares reference-existence checks and the fetch concurrency limit across the documents.
 
 The product schema demonstrates built-in rules; warning/error levels; sibling, document, object, reference, and array validation; custom child paths; and an async `context.getClient()` uniqueness lookup.
 

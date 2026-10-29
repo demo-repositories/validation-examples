@@ -17,7 +17,9 @@ const client = createClient({
   projectId,
   dataset,
   token,
+  // Same API version custom validators pass to context.getClient().
   apiVersion: '2026-09-03',
+  // Validators read the current dataset. A CDN response can make a SKU look unique when it is not.
   useCdn: false,
 })
 

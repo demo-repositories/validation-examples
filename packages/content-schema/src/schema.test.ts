@@ -1,5 +1,5 @@
 import {describe, expect, it, vi} from 'vitest'
-import {validateDocument} from '@sanity/validation'
+import {validateDocument, validateDocuments} from '@sanity/validation'
 import {getValidationSchema} from './index.js'
 import {VALIDATION_API_VERSION} from './validators.js'
 
@@ -86,17 +86,13 @@ describe('product schema', () => {
     expect(result.status).toBe('notEvaluated')
   })
 
-  it('can validate independent documents with the same schema', async () => {
-    const results = await Promise.all(
-      [validProduct, {...validProduct, _id: 'product-2', title: ''}].map((document) =>
-        validateDocument({
-          document,
-          schema: getValidationSchema(),
-          client: validationClient(),
-          getDocumentExists: () => Promise.resolve(true),
-        }),
-      ),
-    )
+  it('validates a batch in input order', async () => {
+    const results = await validateDocuments({
+      documents: [validProduct, {...validProduct, _id: 'product-2', title: ''}],
+      schema: getValidationSchema(),
+      client: validationClient(),
+      getDocumentExists: () => Promise.resolve(true),
+    })
 
     expect(results).toHaveLength(2)
     expect(results[1].markers.some((marker) => marker.path[0] === 'title')).toBe(true)
