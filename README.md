@@ -11,11 +11,15 @@ Examples for running the same Sanity schema validations in a Studio, an App SDK 
 
 The product schema demonstrates built-in rules; warning/error levels; sibling, document, object, reference, and array validation; custom child paths; and an async `context.getClient()` uniqueness lookup.
 
-The private `validation` dataset contains `category-ceramics`, a valid `product-green-mug` (`MUG-0002`), two products that share `MUG-0001`, and `product-invalid`. Validate them from the Studio directory:
+`fixtures/validation.ndjson` is optional test data. The Studio, app, and API run without it. Import it when you want saved documents to validate: `category-ceramics`, a valid `product-green-mug` (`MUG-0002`), two products that share `MUG-0001`, and `product-invalid`. `.env.example` names the dataset `validation`. Create it if it does not exist, then import the file. The Studio CLI uses your Sanity login, which needs permission to create documents:
 
 ```sh
-pnpm --filter @validation-examples/studio exec sanity documents validate --dataset validation
+pnpm --filter @validation-examples/studio exec sanity datasets create validation --visibility private
+pnpm --filter @validation-examples/studio exec sanity datasets import ../../fixtures/validation.ndjson
+pnpm --filter @validation-examples/studio exec sanity documents validate
 ```
+
+Pass `--replace` to `datasets import` when those document IDs are already in the dataset.
 
 ## Run it
 
